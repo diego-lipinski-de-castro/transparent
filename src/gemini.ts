@@ -203,13 +203,13 @@ const readFile = async (
 			model: "gemini-2.5-flash",
 			contents: [
 				{
-					text: prompt,
-				},
-				{
 					inlineData: {
 						mimeType: mimeType,
 						data: base64File,
 					},
+				},
+				{
+					text: prompt,
 				},
 			],
 		});

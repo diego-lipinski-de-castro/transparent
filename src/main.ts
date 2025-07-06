@@ -25,6 +25,8 @@ let winHeight = 50; // input height + padding
 let mainWindow: BrowserWindow;
 let isVisible = false;
 
+const isHidden = true;
+
 const createWindow = () => {
 	// Get the primary display's dimensions
 	const primaryDisplay = screen.getPrimaryDisplay();
@@ -80,9 +82,9 @@ const createWindow = () => {
 	}
 
 	// Open the DevTools.
-	mainWindow.webContents.openDevTools({
-		mode: "detach",
-	});
+	// mainWindow.webContents.openDevTools({
+	// 	mode: "detach",
+	// });
 
 	globalShortcut.register("Cmd+\\", () => {
 		if (isVisible) {
@@ -245,9 +247,9 @@ ipcMain.handle("screenshot", async () => {
 	);
 
 	const base64ImageFile = dataURL.split(",")[1];
-	const image = await readFile(base64ImageFile, "image/png", "What is in this image?");
+	const { text } = await readFile(base64ImageFile, "image/png", "This is a screenshot of the user computer screen. The user wants to know about the content of the screen. Do not describe the elements, just do a research and resume the content.");
 
-	return image;
+	return { text };
 });
 
 ipcMain.handle("audio:capture", async (event, arrayBuffer: ArrayBuffer) => {

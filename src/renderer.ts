@@ -145,12 +145,11 @@ document.getElementById("screenshot-button").addEventListener("click", async () 
 	await renderMessage(userMessage);
 	toggleLoading(true);
 
-	const screenshot = await window.screenshot.capture();
-	console.log(screenshot);
+	const { text } = await window.screenshot.capture();
 
 	const assistantMessage: Message = {
 		role: "assistant",
-		content: screenshot,
+		content: text,
 	};
 
 	toggleLoading(false);
