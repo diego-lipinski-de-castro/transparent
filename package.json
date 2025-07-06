@@ -19,11 +19,7 @@
   "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^7.8.1",
-    "@electron-forge/maker-deb": "^7.8.1",
     "@electron-forge/maker-dmg": "^7.8.1",
-    "@electron-forge/maker-rpm": "^7.8.1",
-    "@electron-forge/maker-squirrel": "^7.8.1",
-    "@electron-forge/maker-zip": "^7.8.1",
     "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
     "@electron-forge/plugin-fuses": "^7.8.1",
     "@electron-forge/plugin-vite": "^7.8.1",
@@ -41,6 +37,7 @@
     "@google/genai": "^1.8.0",
     "bufferutil": "^4.0.9",
     "electron-squirrel-startup": "^1.0.1",
+    "isomorphic-dompurify": "^2.25.0",
     "marked": "^16.0.0",
     "utf-8-validate": "^5.0.10"
   }

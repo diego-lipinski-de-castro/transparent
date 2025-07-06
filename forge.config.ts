@@ -1,8 +1,5 @@
 import type { ForgeConfig } from "@electron-forge/shared-types";
-import { MakerSquirrel } from "@electron-forge/maker-squirrel";
 import { MakerZIP } from "@electron-forge/maker-zip";
-import { MakerDeb } from "@electron-forge/maker-deb";
-import { MakerRpm } from "@electron-forge/maker-rpm";
 import { VitePlugin } from "@electron-forge/plugin-vite";
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
@@ -12,7 +9,7 @@ const config: ForgeConfig = {
 	packagerConfig: {
 		asar: true,
 		osxSign: {
-			optionsForFile: (filePath) => {
+			optionsForFile: () => {
 				return {
 					entitlements: "./entitlements.plist",
 					hardenedRuntime: true,
@@ -21,12 +18,38 @@ const config: ForgeConfig = {
 		},
 	},
 	rebuildConfig: {},
+	publishers: [
+		{
+			name: '@electron-forge/publisher-github',
+			config: {
+				repository: {
+					owner: 'your-github-username',
+					name: 'transparent',
+				},
+				draft: true,
+			},
+		},
+	],
 	makers: [
-		new MakerSquirrel({}),
+		new MakerDMG({
+			format: 'ULFO',
+			icon: './assets/icon.icns',
+			contents: [
+				{
+					x: 448,
+					y: 344,
+					type: 'link',
+					path: '/Applications',
+				},
+				{
+					x: 192,
+					y: 344,
+					type: 'file',
+					path: 'Transparent.app',
+				},
+			],
+		}),
 		new MakerZIP({}, ["darwin"]),
-		new MakerRpm({}),
-		new MakerDeb({}),
-		new MakerDMG({}),
 	],
 	plugins: [
 		new VitePlugin({
@@ -35,12 +58,12 @@ const config: ForgeConfig = {
 			build: [
 				{
 					// `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
-					entry: "src/main.ts",
+					entry: "src/main/index.ts",
 					config: "vite.main.config.ts",
 					target: "main",
 				},
 				{
-					entry: "src/preload.ts",
+					entry: "src/preload/index.ts",
 					config: "vite.preload.config.ts",
 					target: "preload",
 				},
