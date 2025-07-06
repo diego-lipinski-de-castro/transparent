@@ -25,7 +25,7 @@ let winHeight = 50; // input height + padding
 let mainWindow: BrowserWindow;
 let isVisible = false;
 
-const isHidden = true;
+const isHidden = false;
 
 const createWindow = () => {
 	// Get the primary display's dimensions
@@ -50,12 +50,12 @@ const createWindow = () => {
 		// show: true,
 		frame: false,
 		transparent: true,
+		hasShadow: false,
 		alwaysOnTop: true,
 		resizable: false,
 		movable: true,
-		skipTaskbar: true,
-		hasShadow: false,
-		hiddenInMissionControl: true,
+		skipTaskbar: isHidden,
+		hiddenInMissionControl: isHidden,
 		vibrancy: "fullscreen-ui",
 		visualEffectState: "active",
 		titleBarStyle: "default",
@@ -63,8 +63,8 @@ const createWindow = () => {
 		roundedCorners: false,
 	});
 
-	mainWindow.excludedFromShownWindowsMenu = true;
-	mainWindow.setContentProtection(true);
+	mainWindow.excludedFromShownWindowsMenu = isHidden;
+	mainWindow.setContentProtection(isHidden);
 
 	// mainWindow.setWindowButtonVisibility(false);
 	// mainWindow.setIgnoreMouseEvents(true);
