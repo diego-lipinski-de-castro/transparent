@@ -6,7 +6,7 @@ import { WindowState } from "../shared/types";
 class WindowManager {
 	private mainWindow: BrowserWindow | null = null;
 	private isVisible = false;
-	private isHidden = false;
+	private isHidden = true;
 	private heightUpdated = false;
 	private devTools = true;
 

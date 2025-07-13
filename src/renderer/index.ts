@@ -2,6 +2,7 @@ import "./index.css";
 import { ChatComponent } from "./components/chat";
 import { InputComponent } from "./components/input";
 import { MediaControlsComponent } from "./components/media-controls";
+import { FilePickerComponent } from "./components/file-picker";
 import { apiService } from "./services/api";
 import { storageService } from "./services/storage";
 import { getElement } from "./utils/dom";
@@ -11,6 +12,7 @@ class App {
 	private chat: ChatComponent;
 	private input: InputComponent;
 	private mediaControls: MediaControlsComponent;
+	private filePicker: FilePickerComponent;
 	private currentConversationId: string | null = null;
 
 	constructor() {
@@ -35,6 +37,10 @@ class App {
 		this.mediaControls = new MediaControlsComponent(
 			this.handleAudioCaptured.bind(this)
 		);
+
+		this.filePicker = new FilePickerComponent(
+			this.handleFilePick.bind(this)
+		);
 	}
 
 	private setupEventListeners(): void {
@@ -46,12 +52,6 @@ class App {
 		window.electronAPI.on('shortcut:audio', () => {
 			this.handleAudio();
 		});
-
-		// Drag and drop
-		document.addEventListener('dragenter', this.handleDragEnter.bind(this));
-		document.addEventListener('dragover', this.handleDragOver.bind(this));
-		document.addEventListener('drop', this.handleDrop.bind(this));
-		document.addEventListener('dragleave', this.handleDragLeave.bind(this));
 	}
 
 	private async handleSendMessage(message: Message): Promise<void> {
@@ -172,38 +172,37 @@ class App {
 		}
 	}
 
-	private async handleDrop(event: DragEvent): Promise<void> {
-		event.preventDefault();
-		document.body.style.opacity = '1';
-
-		const files = Array.from(event.dataTransfer?.files || []);
-		if (files.length === 0) return;
+	private async handleFilePick(): Promise<void> {
+		const filePath = await apiService.pickFile();
+		
+		if(filePath === null) {
+			return;
+		}
 
 		if (this.chat.isLoading()) return;
 
+		const userMessage: Message = {
+			role: "user",
+			content: `File: ${filePath}`,
+			timestamp: Date.now(),
+			id: this.generateId(),
+		};
+
+		await this.chat.addMessage(userMessage);
 		this.chat.showLoading();
 
 		try {
-			const results = await apiService.processFiles(files);
-			
-			for (const result of results) {
-				const userMessage: Message = {
-					role: "user",
-					content: `File: ${result.fileName}`,
-					timestamp: Date.now(),
-					id: this.generateId(),
-				};
+			const result = await apiService.processFile(filePath);
 
-				const assistantMessage: Message = {
-					role: "assistant",
-					content: result.text,
-					timestamp: Date.now(),
-					id: this.generateId(),
-				};
+			const assistantMessage: Message = {
+				role: "assistant",
+				content: result.text,
+				timestamp: Date.now(),
+				id: this.generateId(),
+			};
 
-				await this.chat.addMessage(userMessage);
-				await this.chat.addMessage(assistantMessage);
-			}
+			await this.chat.addMessage(userMessage);
+			await this.chat.addMessage(assistantMessage);
 
 			this.saveConversation();
 		} catch (error) {
@@ -218,21 +217,6 @@ class App {
 		} finally {
 			this.chat.hideLoading();
 		}
-	}
-
-	private handleDragEnter(event: DragEvent): void {
-		event.preventDefault();
-		document.body.style.opacity = '0.8';
-	}
-
-	private handleDragOver(event: DragEvent): void {
-		event.preventDefault();
-		event.dataTransfer.dropEffect = "copy";
-	}
-
-	private handleDragLeave(event: DragEvent): void {
-		event.preventDefault();
-		document.body.style.opacity = '1';
 	}
 
 	private generateId(): string {

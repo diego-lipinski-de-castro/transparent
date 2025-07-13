@@ -76,17 +76,20 @@ ipcMain.handle(IPC_CHANNELS.AUDIO.CAPTURE, async (event, arrayBuffer: ArrayBuffe
 	return result;
 });
 
-ipcMain.handle(IPC_CHANNELS.FILES.DROP, async (event, files: any[]) => {
-	console.log('Files dropped:', files);
-	// Convert File objects to paths and process
-	const filePaths = files.map(file => file.path);
-	const results = await fileHandlerService.processFiles(filePaths);
-	return results;
+ipcMain.handle(IPC_CHANNELS.FILES.PICK_FILE, async () => {
+	const result = await fileHandlerService.pickFile();
+
+	if(result === null) {
+		return null;
+	}
+
+	windowManager.expandIfNeeded();
+	return result;
 });
 
-ipcMain.handle(IPC_CHANNELS.FILES.PROCESS, async (event, filePath: string, mimeType: string, prompt?: string) => {
+ipcMain.handle(IPC_CHANNELS.FILES.PROCESS, async (event, filePath: string, prompt?: string) => {
 	windowManager.expandIfNeeded();
-	const result = await fileHandlerService.processFile(filePath, mimeType, prompt);
+	const result = await fileHandlerService.processFile(filePath, prompt);
 	return result;
 });
 

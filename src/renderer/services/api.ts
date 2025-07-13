@@ -1,5 +1,5 @@
 import { IPC_CHANNELS } from "../../shared/constants";
-import { Message, AIResponse, ScreenshotResult, AudioResult, FileResult, WindowState } from "../../shared/types";
+import { Message, AIResponse, ScreenshotResult, AudioResult, WindowState, FileResult } from "../../shared/types";
 
 class APIService {
 	async generateText(messages: Message[]): Promise<AIResponse> {
@@ -30,12 +30,12 @@ class APIService {
 		return await window.electronAPI.invoke(IPC_CHANNELS.AUDIO.CAPTURE, arrayBuffer);
 	}
 
-	async processFiles(files: File[]): Promise<FileResult[]> {
-		return await window.electronAPI.invoke(IPC_CHANNELS.FILES.DROP, files);
+	async pickFile(): Promise<string | null> {
+		return await window.electronAPI.invoke(IPC_CHANNELS.FILES.PICK_FILE);
 	}
 
-	async processFile(filePath: string, mimeType: string, prompt?: string): Promise<FileResult> {
-		return await window.electronAPI.invoke(IPC_CHANNELS.FILES.PROCESS, filePath, mimeType, prompt);
+	async processFile(filePath: string, prompt?: string): Promise<FileResult> {
+		return await window.electronAPI.invoke(IPC_CHANNELS.FILES.PROCESS, filePath, prompt);
 	}
 
 	async toggleWindow(): Promise<WindowState> {

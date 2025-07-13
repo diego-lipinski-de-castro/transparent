@@ -149,7 +149,7 @@ class AIService {
 		}
 	}
 
-	async readFile(base64File: string, mimeType: string, prompt: string): Promise<AIResponse> {
+	async readFile(base64File: string, mimeType: string, prompt = 'Analyze this file and provide a summary of its content.'): Promise<AIResponse> {
 		if (!SUPPORTED_FILE_TYPES.includes(mimeType as any)) {
 			return {
 				text: `Unsupported file type: ${mimeType}. Supported types are: PDF, JavaScript, Python, TXT, HTML, CSS, Markdown, CSV, XML, RTF, PNG, JPEG, GIF, WEBP, SVG, TIFF`,

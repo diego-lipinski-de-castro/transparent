@@ -3,6 +3,7 @@ import path from "node:path";
 import { FileResult } from "../../shared/types";
 import { SUPPORTED_FILE_TYPES } from "../../shared/constants";
 import { aiService } from "./ai";
+import { dialog } from "electron";
 
 class FileHandlerService {
 	private uploadDir = "uploads";
@@ -17,7 +18,27 @@ class FileHandlerService {
 		}
 	}
 
-	async processFile(filePath: string, mimeType: string, prompt?: string): Promise<FileResult> {
+	async pickFile(): Promise<string | null> {
+		const result = await dialog.showOpenDialog({
+			properties: ['openFile'],
+			filters: [
+				{
+					name: 'Supported Files',
+					extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'pdf', 'csv', 'mp3', 'wav', 'ogg', 'json', 'xml', 'js', 'py', 'txt', 'html', 'css', 'md']
+				}
+			],
+		});
+
+		if(result.canceled || result.filePaths.length !== 1) {
+			return null;
+		}
+		
+		return result.filePaths[0];
+	}	
+
+	async processFile(filePath: string, prompt?: string): Promise<FileResult> {
+		const mimeType = this.getMimeType(filePath);
+		
 		try {
 			if (!SUPPORTED_FILE_TYPES.includes(mimeType as any)) {
 				return {
@@ -39,8 +60,7 @@ class FileHandlerService {
 			fs.copyFileSync(filePath, uploadPath);
 
 			// Process with AI
-			const defaultPrompt = `Analyze this file and provide a summary of its content.`;
-			const aiResponse = await aiService.readFile(base64File, mimeType, prompt || defaultPrompt);
+			const aiResponse = await aiService.readFile(base64File, mimeType, prompt);
 
 			return {
 				text: aiResponse.text,
@@ -57,28 +77,6 @@ class FileHandlerService {
 				error: error instanceof Error ? error.message : 'Unknown error',
 			};
 		}
-	}
-
-	async processFiles(files: string[]): Promise<FileResult[]> {
-		const results: FileResult[] = [];
-		
-		for (const filePath of files) {
-			try {
-				const mimeType = this.getMimeType(filePath);
-				const result = await this.processFile(filePath, mimeType);
-				results.push(result);
-			} catch (error) {
-				console.error(`Error processing file ${filePath}:`, error);
-				results.push({
-					text: "Failed to process file",
-					fileName: path.basename(filePath),
-					fileType: "unknown",
-					error: error instanceof Error ? error.message : 'Unknown error',
-				});
-			}
-		}
-
-		return results;
 	}
 
 	private getMimeType(filePath: string): string {

@@ -55,7 +55,7 @@ export const IPC_CHANNELS = {
 		CAPTURE: 'audio:capture',
 	},
 	FILES: {
-		DROP: 'files:drop',
+		PICK_FILE: 'files:pickFile',
 		PROCESS: 'files:process',
 	},
 	WINDOW: {
