@@ -201,7 +201,6 @@ class App {
 				id: this.generateId(),
 			};
 
-			await this.chat.addMessage(userMessage);
 			await this.chat.addMessage(assistantMessage);
 
 			this.saveConversation();
