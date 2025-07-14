@@ -88,7 +88,7 @@ ipcMain.handle(IPC_CHANNELS.FILES.PICK_FILE, async () => {
 });
 
 ipcMain.handle(IPC_CHANNELS.FILES.PROCESS, async (event, filePath: string, prompt?: string) => {
-	windowManager.expandIfNeeded();
+	// windowManager.expandIfNeeded();
 	const result = await fileHandlerService.processFile(filePath, prompt);
 	return result;
 });

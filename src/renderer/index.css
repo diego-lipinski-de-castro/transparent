@@ -171,6 +171,17 @@ li {
 
 #audio-button #stop-icon {
 	display: none;
+	animation: blink 1s infinite ease-in-out;
+	color: red;
+}
+
+@keyframes blink {
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
 }
 
 @keyframes spin {
@@ -184,6 +195,7 @@ li {
 
 .loader {
 	margin-left: 10px;
+	margin-top: 10px;
 	margin-bottom: 10px;
 	width: 20px;
 	aspect-ratio: 1;
