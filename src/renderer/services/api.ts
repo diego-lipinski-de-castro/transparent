@@ -45,6 +45,10 @@ class APIService {
 	async getWindowState(): Promise<WindowState> {
 		return await window.electronAPI.invoke(IPC_CHANNELS.WINDOW.GET_STATE);
 	}
+
+	async expandWindow(): Promise<void> {
+		return await window.electronAPI.invoke(IPC_CHANNELS.WINDOW.EXPAND);
+	}
 }
 
 export const apiService = new APIService(); 

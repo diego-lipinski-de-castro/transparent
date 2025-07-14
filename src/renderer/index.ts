@@ -44,7 +44,6 @@ class App {
 	}
 
 	private setupEventListeners(): void {
-		// Global shortcuts
 		window.electronAPI.on('shortcut:screenshot', () => {
 			this.handleScreenshot();
 		});
@@ -238,10 +237,28 @@ class App {
 		storageService.saveConversation(conversation);
 	}
 
-	private loadSettings(): void {
+	private async loadLastConversation(): Promise<void> {
+		const conversations = storageService.getConversations();
+
+		if (conversations.length === 0) {
+			console.log('No previous conversations found');
+			return;
+		}
+
+		const lastConversation = conversations.sort((a, b) => b.updatedAt - a.updatedAt)[0];
+		console.log(`Loaded conversation: ${lastConversation.title}`, lastConversation);
+
+		this.currentConversationId = lastConversation.id;
+		await this.chat.setMessages(lastConversation.messages);
+		
+		apiService.expandWindow();
+	}
+
+	private async loadSettings(): Promise<void> {
 		const settings = storageService.getSettings();
-		// Apply theme
 		document.documentElement.setAttribute('data-theme', settings.theme);
+		
+		await this.loadLastConversation();
 	}
 }
 

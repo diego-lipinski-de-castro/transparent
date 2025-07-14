@@ -62,6 +62,7 @@ export const IPC_CHANNELS = {
 		TOGGLE: 'window:toggle',
 		RESIZE: 'window:resize',
 		GET_STATE: 'window:getState',
+		EXPAND: 'window:expand',
 	},
 	STORAGE: {
 		GET: 'storage:get',

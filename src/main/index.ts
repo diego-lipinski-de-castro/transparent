@@ -34,6 +34,10 @@ app.on("activate", () => {
 });
 
 // IPC Handlers
+ipcMain.handle(IPC_CHANNELS.WINDOW.EXPAND, (event) => {
+	windowManager.expandIfNeeded();
+});
+
 ipcMain.handle(IPC_CHANNELS.AI.GENERATE_TEXT, async (event, messages: Message[]) => {
 	windowManager.expandIfNeeded();
 	const response = await aiService.generateText(messages);

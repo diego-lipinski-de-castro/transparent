@@ -72,9 +72,9 @@ export class ChatComponent {
 		return [...this.messages];
 	}
 
-	setMessages(messages: Message[]): void {
+	async setMessages(messages: Message[]): Promise<void> {
 		this.messages = [...messages];
-		this.renderAllMessages();
+		await this.renderAllMessages();
 	}
 
 	private async renderAllMessages(): Promise<void> {
