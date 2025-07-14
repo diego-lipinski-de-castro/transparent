@@ -6,17 +6,15 @@
 
 ## Support
 
-- OS
- - MacOS
-
-- AI Models
- - Gemini
+- Only MacOS for now
+- Only Gemini for now
 
 # Features
 
 - Send text message
 - Send audio message
-- Capture screen and send as image
+- Send file
+- Capture screenshot
 
 ## Screenshot
 
